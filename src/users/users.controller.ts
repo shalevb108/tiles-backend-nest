@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Req, Res } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { User } from './user.model';
 import { UserService } from './users.service';
 
@@ -6,13 +7,27 @@ import { UserService } from './users.service';
 export class UserController {
   constructor(private readonly usersService: UserService) {}
 
-  @Post('addUser')
-  signUpUser(@Body() signUpUser: User) {
-    const newUser = signUpUser as User;
-    this.usersService.signUpUser(newUser);
-  }
   @Get()
-  getUsers() {
-    return this.usersService.getUsers();
+  async getUsers() {
+    // await this.jwt.verifyCookie(req)
+    return await this.usersService.getUsers();
+  }
+
+  @Post('addUser')
+  async signUpUser(@Body() signUpUser: User) {
+    await this.usersService.signUpUser(signUpUser);
+  }
+
+  @Post('findUser')
+  async getOneUser(
+    @Body() signInUserRequest,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return await this.usersService.getOneUsers(signInUserRequest, response);
+  }
+
+  @Put('changedUsersStatus')
+  async changedUsersRole(@Body() users: User[], @Req() req: Request) {
+    return await this.usersService.changedUsersRole(users, req);
   }
 }

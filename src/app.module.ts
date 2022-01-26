@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserController } from './users/users.controller';
-import { UserService } from './users/users.service';
 import { UsersModule } from './users/users.module';
+import { TilesModule } from './tiles/tile.module';
+import { JwtMiddlewareModule } from './middlewares/jwtMiddleware.module';
 
 @Module({
   imports: [
     UsersModule,
+    TilesModule,
+    JwtMiddlewareModule,
     MongooseModule.forRoot(
       'mongodb+srv://shalevb108:Ss8844430@cluster0.wxz6b.mongodb.net/PermissionsProject?retryWrites=true&w=majority',
     ),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

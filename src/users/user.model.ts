@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import * as mongoose from 'mongoose';
 
 export const UserSchema = new mongoose.Schema({
@@ -6,6 +7,7 @@ export const UserSchema = new mongoose.Schema({
   email: { type: String, required: true },
   role: { type: String, required: true },
   password: { type: String, required: false },
+  _id: { type: ObjectId, required: false },
 });
 
 export interface User {
@@ -14,4 +16,5 @@ export interface User {
   email: string;
   role: string;
   password?: string;
+  _id?: ObjectId;
 }
