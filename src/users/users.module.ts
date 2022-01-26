@@ -4,16 +4,18 @@ import { UserService } from './users.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from './user.model';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtMiddlewareService } from '../middlewares/jwtMiddleware.service';
-import { JwtMiddlewareModule } from 'src/middlewares/jwtMiddleware.module';
 
 @Module({
   imports: [
-    JwtMiddlewareModule,
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
-    JwtModule.register({ secret: 'secret', signOptions: { expiresIn: '1d' } }),
+    JwtModule.registerAsync({
+      useFactory: async () => ({
+        secret: process.env.JWT,
+        signOptions: { expiresIn: '1d' },
+      }),
+    }),
   ],
   controllers: [UserController],
-  providers: [UserService, jwtMiddlewareService],
+  providers: [UserService],
 })
 export class UsersModule {}

@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
-import { Response, Request, response } from 'express';
+import { Response, Request } from 'express';
 import { Model } from 'mongoose';
+import { AuthGuard } from 'src/auth/auth.guard';
 import { User } from './user.model';
 import { comparePassword, encodePassword } from './utils/bcrypt';
 let mongoose = require('mongoose');
@@ -47,32 +48,23 @@ export class UserService {
     }
   }
   async changedUsersRole(users: User[], req: Request) {
-    //if (await this.verifyCookie(req.cookies['token'])) {
     for (const user of users) {
-      if (user.role === 'Admin') {
-        (await this.userModel
-          .findOneAndUpdate({ _id: user._id }, { role: user.role })
-          .exec()) as User;
-      }
-      //}
+      (await this.userModel
+        .findOneAndUpdate({ _id: user._id }, { role: user.role })
+        .exec()) as User;
     }
   }
 
-  // async verifyCookie(token: string) {
-  //   const data = await this.jwtService.verifyAsync(token);
-  //   if (data) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // }
-
   async createCookie(user: User, response: Response) {
-    const jwt = await this.jwtService.signAsync({ id: user._id });
-    response.cookie('token', jwt, {
+    const jwt = await this.jwtService.signAsync({
+      id: user._id,
+      role: user.role,
+    });
+
+    response.cookie('jwt', jwt, {
       httpOnly: true,
       secure: true,
-      sameSite: 'none',
+      sameSite: 'lax',
       maxAge: 100 * 60 * 60 * 24,
     });
   }

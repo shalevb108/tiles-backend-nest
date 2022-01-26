@@ -3,14 +3,15 @@ import {
   Controller,
   Delete,
   Get,
-  Patch,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { AuthGuard } from 'src/auth/auth.guard';
 import { Tile } from './tile.model';
 import { TileService } from './tile.service';
 
+@UseGuards(AuthGuard)
 @Controller('tiles')
 export class TileController {
   constructor(private readonly tileService: TileService) {}
